@@ -1,12 +1,8 @@
-// import Image from 'next/image';
-// import Search from './search';
-
 export default function Home() {
   return (
-    <div>
-      <header>Header</header>
-      <main>main</main>
-      <footer>footer</footer>
+    <div className="flex h-full items-center justify-around">
+      <div>search bar</div>
+      <div>diplay data</div>
     </div>
   );
 }
