@@ -2,22 +2,30 @@
 import { useState } from 'react';
 import Select from 'react-select';
 
-interface IData {
-  id: number;
-  title: string;
-}
+import { ISearchResults, IResponse } from '../types/movies';
 
 const Search = () => {
   const [search, setSearch] = useState('');
-  const [searchResult, setSearchResult] = useState<IData[]>([]);
+  const [searchResult, setSearchResult] = useState<ISearchResults[]>([]);
+  const [selectedMovies, setSelectedMovies] = useState<string[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleMovieSelect = (option: readonly ISearchResults[]) => {
+    let currentMoviesSelected = option.map((opt) => {
+      return opt.id.toString();
+    });
+
+    setSelectedMovies(currentMoviesSelected);
+  };
+
+  const handleSearchSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
-    console.log({ search });
+
     const response = await fetch(
       `https://api.themoviedb.org/3/search/movie?query=${search}`,
       {
@@ -27,25 +35,26 @@ const Search = () => {
       }
     );
 
-    const data: { results: IData[]; page: number; total_pages: number } =
-      await response.json();
-    console.log('data is: ', data);
+    const data: IResponse = await response.json();
 
     if (data.results.length) {
       setSearchResult(data.results);
     }
     setSearch('');
-    console.log({ searchResult });
+  };
+
+  const handleDropdownSubmit = () => {
+    console.log({ selectedMovies });
   };
 
   return (
     <div className="search">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSearchSubmit}>
         <input
           type="text"
           placeholder="Search"
           value={search}
-          onChange={handleChange}
+          onChange={handleInputChange}
         />
       </form>
       {searchResult.length ? (
@@ -55,7 +64,10 @@ const Search = () => {
             getOptionLabel={(option) => option.title}
             getOptionValue={(option) => option.id.toString()}
             isMulti={true}
+            isOptionDisabled={() => selectedMovies.length >= 6}
+            onChange={handleMovieSelect}
           />
+          <button onClick={handleDropdownSubmit}>submit</button>
         </div>
       ) : null}
     </div>
