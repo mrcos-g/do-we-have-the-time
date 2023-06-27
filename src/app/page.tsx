@@ -9,3 +9,5 @@ export default function Home() {
     </div>
   );
 }
+
+// https://image.tmdb.org/t/p/original/[poster_path] - use with poster path
