@@ -45,7 +45,7 @@ const Search = () => {
 
   const handleDropdownSubmit = async () => {
     try {
-      const test = await Promise.all(
+      const movies = await Promise.all(
         selectedMovies.map(async (movie) => {
           const response = await fetch(
             `https://api.themoviedb.org/3/movie/${movie}?language=en-US`,
@@ -59,7 +59,7 @@ const Search = () => {
           return await response.json();
         })
       );
-      console.log(test);
+      console.log(movies);
     } catch (error) {
       console.log(error);
     }
