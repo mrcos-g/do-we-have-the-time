@@ -43,8 +43,26 @@ const Search = () => {
     setSearch('');
   };
 
-  const handleDropdownSubmit = () => {
-    console.log({ selectedMovies });
+  const handleDropdownSubmit = async () => {
+    try {
+      const movies = await Promise.all(
+        selectedMovies.map(async (movie) => {
+          const response = await fetch(
+            `https://api.themoviedb.org/3/movie/${movie}?language=en-US`,
+            {
+              headers: {
+                Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`,
+              },
+            }
+          );
+
+          return await response.json();
+        })
+      );
+      console.log(movies);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
